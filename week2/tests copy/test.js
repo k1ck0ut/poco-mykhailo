@@ -1,19 +1,12 @@
-let fuel
-let astronauts
-let km = 0
-do {
-  fuel = prompt("Enter fuel: max 30.000")
+for (i = 50; i > -15; i--){
+    if (i % 3 == 0 && i < 50 && i > 20) {
+     console.log(i, "from 50-20 multiple of 3")
+    }
+    else if (i %2 != 0){
+     console.log(i, "ODD")
+    }
+    else if ( i%2 == 0){
+     console.log(i, "EVEN")
+    }
 
-}while ( fuel < 5000 || fuel > 30001);
-
-do {
-  astronauts = prompt ("Enter astronauts max. 7: ")
-
-} while (astronauts > 7 || astronauts < 1);
-
-while (fuel >= astronauts*100)
-{
-fuel = fuel - astronauts*100;
-km = km + 50
-console.log (fuel, km, "starting the game")
 }
