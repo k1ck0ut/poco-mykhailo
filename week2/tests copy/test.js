@@ -1,4 +1,4 @@
-for (i = 12; i <= 114; i++){
+for (i = 12; i <= 1114; i++){
     if (i %2 != 0){
      console.log(i, "ODD")
     }
