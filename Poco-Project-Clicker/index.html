@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clickerino</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="tabs">
+      <button class="tab active" data-tab="shop">Shop</button>
+      <button class="tab" data-tab="upgrades">Upgrades</button>
+      <button class="tab" data-tab="stats">Stats</button>
+    </div>
+    <div class="muted" style="margin-left:auto">Click to see falling logos :)</div>
+  </header>
+
+  <main id="playfield" class="playfield">
+    <section id="panel-shop" class="panel active">
+      <h3>Shop</h3>
+      <div class="card">
+        <div class="row">
+          <div>
+            <div class="title">Click Power +1</div>
+            <div class="muted">Increase coins per click</div>
+          </div>
+          <button id="buyClickPower" class="btn primary">Buy <span id="costClickPower"></span></button>
+        </div>
+      </div>
+      <div class="muted">Add more items later</div>
+    </section>
+
+    <section id="panel-upgrades" class="panel">
+      <h3>Upgrades</h3>
+      <div class="card"><div class="muted">Placeholder</div></div>
+    </section>
+
+    <section id="panel-stats" class="panel">
+      <h3>Stats</h3>
+      <div class="card">
+        <div>Total clicks: <b id="totalClicks">0</b></div>
+        <div>Last saved: <span id="savedAt" class="muted">—</span></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="dock">
+    <div class="hud">
+      <div class="stat">
+        <div class="label">Balance</div>
+        <div><b id="currencyText">0</b></div>
+      </div>
+      <div class="stat">
+        <div class="label">Per click</div>
+        <div><b id="perClickText">1</b></div>
+      </div>
+
+      <button id="clicker" class="clicker" type="button" aria-label="Click!">
+        <img id="clickerImg" alt="">
+        <span class="title">Click!</span>
+      </button>
+
+      <button id="reset" class="btn" title="Reset progress">Reset</button>
+    </div>
+  </footer>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
