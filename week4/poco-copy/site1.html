@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impacting Lives by Digital Skills</title>
+
+    <style>
+        .txt h1 {
+            margin: auto;
+            width: 25%;
+            padding-top: 75px;
+            padding-bottom: 25px;
+            color: rgb(180, 1, 1);
+        }
+
+        .logo {
+            float: left;
+        }
+
+        .hamburger {
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            float: right;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: black;
+            border-radius: 2px;
+        }
+
+        .topnav a {
+            color: black;
+            text-decoration: auto;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .topnav ul {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        .topnav ul {
+
+            float: right;
+            list-style-type: none;
+            margin: 30px;
+            word-spacing: 20px;
+        }
+
+        .topnav ul li {
+            display: inline-block;
+            font-size: 25px;
+            font-family: sans-serif;
+            font-variant-caps: all-petite-caps;
+        }
+
+        .txt {
+            display: grid;
+            font-family: sans-serif;
+            font-size: larger;
+        }
+
+        .txt p {
+            font-family: 'Roboto', 'Open Sans', Arial, sans-serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #000000ab;
+            max-width: 700px;
+            margin: 25px auto;
+            text-align: center;
+        }
+
+        .txt strong {
+            font-size: medium;
+            margin: auto;
+        }
+
+        .centered {
+            position: absolute;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 35px;
+            font-family: sans-serif;
+        }
+
+        .button {
+            font-size: medium;
+            padding: 15px;
+            margin: auto;
+            border: unset;
+            background: lightgreen;
+            max-inline-size: max-content;
+        }
+    </style>
+    <img class="logo" src="./imgs/pclogo.jpg" width="280" height="90"> </img>
+</head>
+
+<body>
+    <div class="hamburger" onclick="document.querySelector('.topnav ul').classList.toggle('show')">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="topnav">
+
+        <ul>
+            <li><a class="active" href="#programs">Programs</a></li>
+            <li><a href="#companies">Companies</a></li>
+            <li><a href="#volunteers">Volunteers</a></li>
+            <li><a href="#impact">Impact</a></li>
+            <li><a href="#stories">Stories</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <img src="./imgs/pcmain.png" width="1500px"> </img>
+        <h2 class="centered">Impacting Lives by Teaching Digital Skills</h2>
+    </div>
+    <div class="txt">
+        <h1>Why Powercoders?</h1>
+        <p>Switzerland will soon be short of almost 40,000 ICT specialists. At the same time, there is an increasing
+            number of well-qualified, highly motivated people from refugee and migrant backgrounds who are struggling to
+            gain a foothold in the labor market.
+        </p>
+        <p>There's one solution for two problems:</p>
+        <strong>Empowering refugees & migrants for an IT career.</strong>
+        <p>
+            Powercoders is an ICT job integration program for people from refugee and migrant backgrounds.
+        </p>
+        <br>
+        <button class="button" type="button">MORE ABOUT US</button>
+    </div>
+</body>
+
+</html>
