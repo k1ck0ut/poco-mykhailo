@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Powercoders Clicker</title>
+  <link rel="stylesheet" href="clicker.css" />
+  <link rel="icon" type="assets/x-icon" href="./assets/logo.ico">
+</head>
+
+<body>
+  <div class="page-bg"></div>
+  <div class="app">
+    <header class="topbar">
+      <nav class="tabs">
+        <button class="tab" data-panel="upgrades" aria-label="Upgrades">
+          <img class="ico" id="ico-upgrades" alt="Upg" />
+          <span class="t">Upg</span>
+        </button>
+        <button class="tab" data-panel="shop" aria-label="Shop" disabled>
+          <img class="ico" id="ico-shop" alt="Shop" />
+          <span class="t">Shop</span>
+        </button>
+        <button class="tab" data-panel="map" aria-label="Map">
+          <img class="ico" id="ico-map" alt="Map" />
+          <span class="t">Map</span>
+        </button>
+        <button class="tab" data-panel="inventory" aria-label="Inventory">
+          <img class="ico" id="ico-inventory" alt="Inv" />
+          <span class="t">Inventory</span>
+        </button>
+      </nav>
+
+      <div class="curr">
+        <div class="c"><span class="ico-txt">$</span><b id="usd">0</b></div>
+        <div class="c"><span class="ico-txt" id="pSym">{P.}</span><b id="pc">0</b></div>
+        <div class="c"><img class="ico" id="ico-cpu" alt="CPU" /><b id="cpu">0</b></div>
+      </div>
+
+    </header>
+
+    <main class="playfield" id="playfield">
+      <button id="closePanels" class="close-btn" aria-label="Close">✕</button>
+      <div id="centerSymbol">{P.}</div>
+      <section class="panel" id="panel-upgrades" aria-label="Upgrades">
+        <h3>Upgrades</h3>
+        <div class="upgrade-tabs">
+          <button class="upgrade-tab selected" id="upgradeTabMain" data-cat="main">Main</button>
+          <button class="upgrade-tab" id="upgradeTabSpecial" data-cat="special">Special</button>
+        </div>
+        <div class="buy-qty">
+          <button class="btn small" id="buyQty1">x1</button>
+          <button class="btn small" id="buyQty5">x5</button>
+          <button class="btn small" id="buyQty10">x10</button>
+          <button class="btn small" id="buyQtyMax">Max</button>
+        </div>
+        <div id="upgradeListMain" class="upgrade-list"></div>
+        <div id="upgradeListSpecial" class="upgrade-list hidden"></div>
+      </section>
+
+      <section class="panel" id="panel-shop" aria-label="Shop">
+        <h3>Shop</h3>
+        <div class="card">
+          <div class="sub">In development</div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-stats" aria-label="Stats">
+        <h3>Stats</h3>
+        <div class="card">
+          <div class="line"><span>Total clicks</span><b id="totalClicks">0</b></div>
+          <div class="line"><span>Per click</span><b><span id="perClick">1</span> <span id="pSymInline3">{P.}</span></b>
+          </div>
+          <div class="line"><span>Per second</span><b><span id="perSecond">0</span> <span
+                id="pSymInline4">{P.}</span></b></div>
+          <div class="line"><span>Crit chance</span><b id="critChanceStat">0%</b></div>
+          <div class="line"><span>Crit multiplier</span><b id="critMultStat">x2</b></div>
+        </div>
+        <div class="card" id="achievementsCard">
+          <div class="title">Achievements</div>
+          <div id="achievementsList" class="achievements"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-map" aria-label="Map">
+        <h3>Map</h3>
+
+        <div class="card">
+          <div id="mapInfo" class="sub">Explore the nodes to earn rewards.</div>
+        </div>
+
+        <!-- 3D container -->
+        <div id="map3d" class="map3d"></div>
+
+        <!-- optional: 2D grid below -->
+        <div id="mapGrid" class="map-grid"></div>
+      </section>
+      </section>
+
+      <section class="panel" id="panel-inventory" aria-label="Inventory">
+        <h3>Inventory</h3>
+        <div class="card">
+          <div class="sub">In development</div>
+        </div>
+      </section>
+
+      <section class="panel" id="panel-settings" aria-label="Settings">
+        <h3>Settings</h3>
+        <div class="card">
+          <div class="line"><span>Sound FX</span><label class="switch"><input type="checkbox"
+                id="sfxToggle"><span></span></label></div>
+          <div class="line"><span>Music</span><label class="switch"><input type="checkbox"
+                id="musicToggle"><span></span></label></div>
+        </div>
+        <div class="card">
+          <div class="line">
+            <span>Theme</span>
+            <select id="themeSel">
+              <option value="dark">Dark</option>
+              <option value="light">Light</option>
+              <option value="neon">Neon</option>
+              <option value="green">Green</option>
+
+            </select>
+          </div>
+          <div class="line">
+            <span>Logo</span>
+            <select id="styleSel"></select>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="dock">
+      <div class="mini" id="miniBrain">
+        <img class="mini-ico" id="miniBrainIco" alt="Brainstorm" />
+        <span class="mini-x" id="miniBrainX">x0</span>
+      </div>
+
+      <button class="clicker" id="clicker" aria-label="Click!">
+        <img id="clickLogo" alt="Logo" />
+      </button>
+
+      <div class="dock-actions">
+        <button class="tab" data-panel="stats" aria-label="Stats">
+
+          <span class="t">Stats</span>
+        </button>
+        <button class="btn ghost" id="openSettings"><span class="gear">⚙️</span> Settings</button>
+        <button class="btn disabled" id="rebirth" disabled>Rebirth</button>
+      </div>
+    </footer>
+  </div>
+  <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="./script/constants.js"></script>
+  <script src="./script/state.js"></script>
+  <script src="./script/upgrades.js"></script>
+  <script src="./script/achievements.js"></script>
+  <script src="./script/logic.js"></script>
+  <script src="./script/ui.js"></script>
+  <script src="./script/audio.js"></script>
+  <script src="./script/events.js"></script>
+  <script src="./script/main.js"></script>
+</body>
+
+</html>
