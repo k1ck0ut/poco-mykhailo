@@ -31,12 +31,13 @@
     if (pSym) pSym.textContent = curr;
     if (pSymInline3) pSymInline3.textContent = curr;
     if (pSymInline4) pSymInline4.textContent = curr;
-    document.querySelectorAll(".pSym").forEach((n) => (n.textContent = curr));
+    document.querySelectorAll(".pSym").forEach(function (n) {
+      n.textContent = curr;
+    });
     if (centerSymbol) centerSymbol.textContent = curr;
-    if (typeof renderUpgrades === "function") {
-      renderUpgrades();
-    }
+    if (typeof renderUpgrades === "function") renderUpgrades();
   };
+
   let map3d = {
     inited: false,
     running: false,
@@ -46,90 +47,313 @@
     rafId: null,
     mount: null,
     animateHook: null,
+    controls: null,
+    homeBtn: null,
+    overlays: [],
   };
+
+  function hasProp(obj, name) {
+    return Object.prototype.hasOwnProperty.call(obj, name);
+  }
 
   function initMap3D() {
     if (map3d.inited) return;
     map3d.mount = document.getElementById("map3d");
     if (!map3d.mount || !window.THREE) return;
+
     const rect = map3d.mount.getBoundingClientRect();
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0e0e10);
+
     const camera = new THREE.PerspectiveCamera(
       55,
       rect.width / rect.height,
       0.1,
-      100
+      2000
     );
-    camera.position.set(2.2, 1.8, 3.2);
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(rect.width, rect.height);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    map3d.mount.appendChild(renderer.domElement);
-    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-    const dir = new THREE.DirectionalLight(0xffffff, 1.0);
-    dir.position.set(3, 5, 2);
-    scene.add(ambient, dir);
+    camera.position.set(0, 0, 3);
 
-    const loader = new THREE.GLTFLoader();
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(rect.width, rect.height);
+    if (hasProp(renderer, "outputColorSpace"))
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+    else renderer.outputEncoding = THREE.sRGBEncoding;
+    map3d.mount.appendChild(renderer.domElement);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x222233, 0.7);
+    const dir = new THREE.DirectionalLight(0xffffff, 1.1);
+    dir.position.set(3, 5, 2);
+    scene.add(ambient, hemi, dir);
+
+    if (THREE.OrbitControls) {
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.enablePan = false;
+      controls.minDistance = 0.8;
+      controls.maxDistance = 1000;
+      map3d.controls = controls;
+    }
+
+    function frameToObject(obj, pad) {
+      const box = new THREE.Box3().setFromObject(obj);
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z) || 1;
+      const fov = THREE.MathUtils.degToRad(camera.fov);
+      const dist = (maxDim / 2 / Math.tan(fov / 2)) * (pad || 1.25);
+      const dirVec = new THREE.Vector3(0, 0.25, 1).normalize();
+      camera.position.copy(center.clone().add(dirVec.multiplyScalar(dist)));
+      camera.near = Math.max(0.01, dist / 100);
+      camera.far = dist * 100;
+      camera.updateProjectionMatrix();
+      camera.lookAt(center);
+    }
+
+    function latLonToUnit(lonDeg, latDeg) {
+      const lon = THREE.MathUtils.degToRad(lonDeg);
+      const lat = THREE.MathUtils.degToRad(latDeg);
+      const x = Math.cos(lat) * Math.cos(lon);
+      const y = Math.sin(lat);
+      const z = Math.cos(lat) * Math.sin(lon);
+      return new THREE.Vector3(x, y, z);
+    }
+
+    function makeMarkerSprite(radius) {
+      const r = radius || 0.02;
+      const texSize = 128;
+      const cvs = document.createElement("canvas");
+      cvs.width = cvs.height = texSize;
+      const ctx = cvs.getContext("2d");
+      const grd = ctx.createRadialGradient(
+        texSize / 2,
+        texSize / 2,
+        6,
+        texSize / 2,
+        texSize / 2,
+        texSize / 2
+      );
+      grd.addColorStop(0, "rgba(255,80,80,1)");
+      grd.addColorStop(1, "rgba(255,80,80,0)");
+      ctx.fillStyle = grd;
+      ctx.beginPath();
+      ctx.arc(texSize / 2, texSize / 2, texSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+      const texture = new THREE.CanvasTexture(cvs);
+      if (hasProp(texture, "colorSpace"))
+        texture.colorSpace = THREE.SRGBColorSpace;
+      else texture.encoding = THREE.sRGBEncoding;
+      const material = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: true,
+      });
+      const sprite = new THREE.Sprite(material);
+      sprite.scale.setScalar(r);
+      return sprite;
+    }
+
+    function projectToScreen(worldPos) {
+      const p = worldPos.clone().project(camera);
+      const w = map3d.renderer.domElement.clientWidth;
+      const h = map3d.renderer.domElement.clientHeight;
+      return {
+        x: (p.x * 0.5 + 0.5) * w,
+        y: (-p.y * 0.5 + 0.5) * h,
+        behind: p.z > 1 || p.z < -1,
+      };
+    }
+
+    function makeOverlayButton(text) {
+      const b = document.createElement("button");
+      b.textContent = text;
+      b.className = "btn small map-float";
+      b.style.position = "absolute";
+      b.style.transform = "translate(-50%,-50%)";
+      b.style.pointerEvents = "auto";
+      b.style.zIndex = "2";
+      map3d.mount.appendChild(b);
+      map3d.overlays.push(b);
+      return b;
+    }
+
+    const MODEL_PATH = "assets/models/earth.glb";
+    const manager = new THREE.LoadingManager();
+    const loader = new THREE.GLTFLoader(manager);
+
     loader.load(
-      "assets/models/earth.glb",
-      (gltf) => {
+      MODEL_PATH,
+      function (gltf) {
         const model = gltf.scene;
         model.scale.set(1, 1, 1);
         model.position.set(0, 0, 0);
         model.rotation.set(0, 0, 0);
 
-        model.traverse((o) => {
+        model.traverse(function (o) {
           if (!o.isMesh) return;
           const oldMat = o.material;
           const tex = oldMat && oldMat.map ? oldMat.map : null;
-          if (tex) tex.colorSpace = THREE.SRGBColorSpace;
-
+          if (tex) {
+            if (hasProp(tex, "colorSpace"))
+              tex.colorSpace = THREE.SRGBColorSpace;
+            else tex.encoding = THREE.sRGBEncoding;
+          }
           o.material = new THREE.MeshBasicMaterial({
             map: tex || null,
             color: 0xffffff,
             side: THREE.DoubleSide,
           });
-
-          if (o.geometry && o.geometry.computeVertexNormals) {
+          if (o.geometry && o.geometry.computeVertexNormals)
             o.geometry.computeVertexNormals();
-          }
-        });
-
-        model.traverse((o) => {
-          if (o.isMesh) {
-            const box = new THREE.Box3().setFromObject(o);
-            const size = box.getSize(new THREE.Vector3());
-            if (Math.max(size.x, size.y, size.z) > 100) o.visible = false;
-          }
         });
 
         scene.add(model);
+        frameToObject(model, 1.25);
 
-        const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
+        const bbox = new THREE.Box3().setFromObject(model);
+        const size = bbox.getSize(new THREE.Vector3());
+        const globeRadius = Math.max(size.x, size.y, size.z) * 0.5;
+
+        const homeLat = 47.3769;
+        const homeLon = 8.5417;
+        const homeDir = latLonToUnit(homeLon, homeLat);
+        const home = makeMarkerSprite();
+        home.scale.setScalar(globeRadius * 0.08);
+        home.position.copy(homeDir.clone().multiplyScalar(globeRadius * 1.002));
+        model.add(home);
+
+        const cityBtn = document.getElementById("btnCity");
+        const cityOverlay = document.getElementById("cityOverlay");
+        const closeCity = document.getElementById("closeCity");
+
+        if (cityBtn && cityOverlay) {
+          cityBtn.addEventListener("click", () => {
+            cityOverlay.classList.add("active");
+          });
+        }
+
+        if (closeCity && cityOverlay) {
+          closeCity.addEventListener("click", () => {
+            cityOverlay.classList.remove("active");
+          });
+        }
+
+        function placeOverlayForPoint(v3, btn) {
+          const sp = projectToScreen(v3);
+          if (sp.behind) {
+            btn.style.display = "none";
+            return;
+          }
+          btn.style.display = "block";
+          btn.style.left = sp.x + "px";
+          btn.style.top = sp.y - 20 + "px";
+        }
+
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        const pickingSphere = new THREE.Mesh(
+          new THREE.SphereGeometry(globeRadius * 1.001, 64, 32),
+          new THREE.MeshBasicMaterial({ visible: false })
+        );
+        model.add(pickingSphere);
+
+        map3d.mount.addEventListener("pointerdown", function (e) {
+          const r = map3d.mount.getBoundingClientRect();
+          mouse.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+          mouse.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+          raycaster.setFromCamera(mouse, camera);
+          const hits = raycaster.intersectObject(pickingSphere, true);
+          if (hits.length) {
+            const p = hits[0].point.clone().sub(model.position).normalize();
+            home.position.copy(p.multiplyScalar(globeRadius * 1.002));
+          }
+        });
+
+        function spawnRefugeeEvent() {
+          const lat = -80 + Math.random() * 160;
+          const lon = -180 + Math.random() * 360;
+          const dir = latLonToUnit(lon, lat);
+          const pos = dir.clone().multiplyScalar(globeRadius * 1.002);
+          const marker = makeMarkerSprite();
+          marker.scale.setScalar(globeRadius * 0.06);
+          marker.position.copy(pos);
+          model.add(marker);
+
+          const btn = makeOverlayButton("Help Refugee");
+          const createdAt = performance.now();
+          const lifetime = 12000;
+          const tick = function () {
+            const now = performance.now();
+            placeOverlayForPoint(
+              marker.getWorldPosition(new THREE.Vector3()),
+              btn
+            );
+            if (now - createdAt > lifetime) {
+              btn.remove();
+              map3d.overlays = map3d.overlays.filter((x) => x !== btn);
+              model.remove(marker);
+              return;
+            }
+            btn._raf = requestAnimationFrame(tick);
+          };
+          btn._raf = requestAnimationFrame(tick);
+
+          btn.addEventListener("click", function () {
+            pc += 50;
+            render();
+            save();
+            if (btn._raf) cancelAnimationFrame(btn._raf);
+            btn.remove();
+            map3d.overlays = map3d.overlays.filter((x) => x !== btn);
+            model.remove(marker);
+          });
+        }
+
+        const startT = performance.now();
+        const baseScale = home.scale.x;
+        const prevHook = map3d.animateHook;
+        map3d.animateHook = function () {
+          if (prevHook) prevHook();
+          model.rotation.y += 0.0005;
+          const t = (performance.now() - startT) / 1000;
+          const s = baseScale * (1 + 0.15 * Math.sin(t * 3.2));
+          home.scale.setScalar(s);
+          if (map3d.controls && map3d.controls.update) map3d.controls.update();
+          if (map3d.homeBtn)
+            placeOverlayForPoint(
+              home.getWorldPosition(new THREE.Vector3()),
+              map3d.homeBtn
+            );
+        };
+
+        spawnRefugeeEvent();
+        setInterval(spawnRefugeeEvent, 8000);
+      },
+      undefined,
+      function (err) {
+        const geo = new THREE.BoxGeometry();
+        const mat = new THREE.MeshStandardMaterial({
+          metalness: 0.1,
+          roughness: 0.4,
+          color: 0x7bd88f,
+        });
+        const cube = new THREE.Mesh(geo, mat);
+        scene.add(cube);
+        const box = new THREE.Box3().setFromObject(cube);
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
         const fov = THREE.MathUtils.degToRad(camera.fov);
-        const dist = (maxDim / 2 / Math.tan(fov / 2)) * 1.25;
-        const dirVec = new THREE.Vector3(0, 0.25, 1).normalize();
-        camera.position.copy(center.clone().add(dirVec.multiplyScalar(dist)));
-        camera.near = dist / 100;
+        const dist = (maxDim / 2 / Math.tan(fov / 2)) * 1.2;
+        camera.position.set(0, 0, dist * 1.2);
+        camera.near = Math.max(0.01, dist / 100);
         camera.far = dist * 100;
         camera.updateProjectionMatrix();
-        camera.lookAt(center);
-
-        map3d.animateHook = () => {
-          model.rotation.y += 0.0007;
+        camera.lookAt(new THREE.Vector3());
+        map3d.animateHook = function () {
+          cube.rotation.y += 0.01;
+          if (map3d.controls && map3d.controls.update) map3d.controls.update();
         };
-
-        console.log("Earth model loaded successfully");
-      },
-      undefined,
-      (err) => {
-        console.error("Earth model failed to load:", err);
       }
     );
 
@@ -138,7 +362,7 @@
     map3d.renderer = renderer;
     map3d.inited = true;
 
-    window.addEventListener("resize", () => {
+    window.addEventListener("resize", function () {
       if (!map3d.inited) return;
       const r = map3d.mount.getBoundingClientRect();
       camera.aspect = r.width / r.height;
@@ -150,7 +374,7 @@
   function startMap3D() {
     if (!map3d.inited || map3d.running) return;
     map3d.running = true;
-    const animate = () => {
+    const animate = function () {
       if (!map3d.running) return;
       if (typeof map3d.animateHook === "function") map3d.animateHook();
       map3d.renderer.render(map3d.scene, map3d.camera);
@@ -163,13 +387,21 @@
     map3d.running = false;
     if (map3d.rafId) cancelAnimationFrame(map3d.rafId);
     map3d.rafId = null;
+    if (map3d.overlays && map3d.overlays.length) {
+      map3d.overlays.forEach(function (b) {
+        try {
+          b.remove();
+        } catch (e) {}
+      });
+      map3d.overlays = [];
+    }
   }
 
   window.populateSettings = function () {
     if (themeSel) themeSel.value = theme;
     if (styleSel) {
       styleSel.innerHTML = "";
-      Object.keys(STYLE_PRESETS).forEach((k) => {
+      Object.keys(STYLE_PRESETS).forEach(function (k) {
         const o = document.createElement("option");
         o.value = k;
         o.textContent = k;
@@ -180,7 +412,7 @@
   };
 
   window.getStyleKeyFromState = function () {
-    const match = Object.keys(STYLE_PRESETS).find((k) => {
+    const match = Object.keys(STYLE_PRESETS).find(function (k) {
       const s = STYLE_PRESETS[k];
       return s.logoKey === logoKey && s.currency === curr;
     });
@@ -188,16 +420,18 @@
   };
 
   window.closeAllPanels = function () {
-    Object.values(panels).forEach((p) => p && p.classList.remove("active"));
+    Object.values(panels).forEach(function (p) {
+      if (p) p.classList.remove("active");
+    });
   };
 
   window.openPanel = function (name) {
-    Object.values(panels).forEach((p) => p && p.classList.remove("active"));
+    Object.values(panels).forEach(function (p) {
+      if (p) p.classList.remove("active");
+    });
     if (panels[name]) panels[name].classList.add("active");
     if (centerSymbol) {
-      if (name) {
-        centerSymbol.style.opacity = "0.06";
-      }
+      if (name) centerSymbol.style.opacity = "0.06";
     }
     if (name === "map") {
       initMap3D();
@@ -215,10 +449,13 @@
     el.style.left = evt.clientX + "px";
     el.style.top = evt.clientY - 20 + "px";
     document.body.appendChild(el);
-    el.addEventListener("animationend", () => el.remove());
+    el.addEventListener("animationend", function () {
+      el.remove();
+    });
   };
 
-  window.spawnRain = function (n = 1) {
+  window.spawnRain = function (n) {
+    n = n || 1;
     const rect = playfield.getBoundingClientRect();
     for (let i = 0; i < n; i++) {
       const s = document.createElement("div");
@@ -227,12 +464,14 @@
       img.src = logoSrc();
       s.appendChild(img);
       const x = Math.random() * (rect.width - 40) - rect.width / 2;
-      s.style.setProperty("--x", `${x}px`);
+      s.style.setProperty("--x", x + "px");
       s.style.setProperty("--dur", 5.6 + Math.random() * 3.6 + "s");
       s.style.left = rect.width / 2 + "px";
       s.style.top = "0px";
       playfield.appendChild(s);
-      s.addEventListener("animationend", () => s.remove());
+      s.addEventListener("animationend", function () {
+        s.remove();
+      });
     }
   };
 
@@ -257,11 +496,9 @@
     if (elCPU) elCPU.textContent = formatCompact(Math.floor(cpu));
     if (elPerClick) elPerClick.textContent = formatCompact(getPerClick());
     if (elTotal) elTotal.textContent = formatCompact(totalClicks);
-
     if (miniBrainX) miniBrainX.textContent = "x" + formatCompact(brainLvl);
-    if (typeof elPerSecond !== "undefined" && elPerSecond) {
+    if (typeof elPerSecond !== "undefined" && elPerSecond)
       elPerSecond.textContent = formatCompact(pcps);
-    }
     renderUpgrades();
     const bCost = brainCost();
     if (spanBrainCost) spanBrainCost.textContent = formatCompact(bCost);
@@ -280,7 +517,7 @@
   };
 
   window.checkAchievements = function () {
-    achievements.forEach((a) => {
+    achievements.forEach(function (a) {
       if (
         !achievementsUnlocked[a.id] &&
         typeof a.condition === "function" &&
@@ -297,7 +534,7 @@
   window.renderUpgrades = function () {
     if (upgradeListMain) {
       upgradeListMain.innerHTML = "";
-      mainUpgrades.forEach((u) => {
+      mainUpgrades.forEach(function (u) {
         const lvl = upgradeLevels[u.id] || 0;
         const cost = u.costFunc ? u.costFunc(lvl) : u.cost || 0;
         const card = document.createElement("div");
@@ -323,13 +560,11 @@
         const sub = document.createElement("div");
         sub.className = "sub";
         const incStr = u.increment.toString().replace(/\.0+$/, "");
-        if (u.effectType === "perClick") {
+        if (u.effectType === "perClick")
           sub.textContent = "+" + incStr + " " + curr + " per click";
-        } else if (u.effectType === "perSecond") {
+        else if (u.effectType === "perSecond")
           sub.textContent = "+" + incStr + " " + curr + " per second";
-        } else {
-          sub.textContent = u.desc || "";
-        }
+        else sub.textContent = u.desc || "";
         info.appendChild(sub);
         infoRow.appendChild(info);
         row.appendChild(infoRow);
@@ -354,16 +589,16 @@
     if (upgradeListSpecial) {
       upgradeListSpecial.innerHTML = "";
       const list = specialUpgrades
-        .filter((s) =>
-          typeof s.condition === "function" ? s.condition() : true
-        )
+        .filter(function (s) {
+          return typeof s.condition === "function" ? s.condition() : true;
+        })
         .slice();
-      list.sort((a, b) => {
+      list.sort(function (a, b) {
         const oa = specialOwned[a.id] || false;
         const ob = specialOwned[b.id] || false;
         return oa === ob ? 0 : oa ? 1 : -1;
       });
-      list.forEach((s) => {
+      list.forEach(function (s) {
         const owned = specialOwned[s.id];
         const cost = s.costFunc ? s.costFunc() : s.cost || 0;
         const card = document.createElement("div");
@@ -423,7 +658,7 @@
     const listEl = document.getElementById("achievementsList");
     if (!listEl) return;
     listEl.innerHTML = "";
-    achievements.forEach((a) => {
+    achievements.forEach(function (a) {
       const unlocked = achievementsUnlocked[a.id];
       const item = document.createElement("div");
       item.className = "achievement" + (unlocked ? "" : " locked");
@@ -450,4 +685,16 @@
       listEl.appendChild(item);
     });
   };
+  (function setupCityWiring() {
+    var cityBtn = document.getElementById("btnCity");
+    var closeCity = document.getElementById("closeCity");
+    if (cityBtn)
+      cityBtn.addEventListener("click", function () {
+        openPanel("city");
+      });
+    if (closeCity)
+      closeCity.addEventListener("click", function () {
+        openPanel("map");
+      });
+  })();
 })();

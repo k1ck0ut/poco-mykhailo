@@ -31,18 +31,17 @@
           <span class="t">Inventory</span>
         </button>
       </nav>
-
       <div class="curr">
         <div class="c"><span class="ico-txt">$</span><b id="usd">0</b></div>
         <div class="c"><span class="ico-txt" id="pSym">{P.}</span><b id="pc">0</b></div>
         <div class="c"><img class="ico" id="ico-cpu" alt="CPU" /><b id="cpu">0</b></div>
       </div>
-
     </header>
 
     <main class="playfield" id="playfield">
       <button id="closePanels" class="close-btn" aria-label="Close">✕</button>
       <div id="centerSymbol">{P.}</div>
+
       <section class="panel" id="panel-upgrades" aria-label="Upgrades">
         <h3>Upgrades</h3>
         <div class="upgrade-tabs">
@@ -86,17 +85,32 @@
       <section class="panel" id="panel-map" aria-label="Map">
         <h3>Map</h3>
 
-        <div class="card">
-          <div id="mapInfo" class="sub">Explore the nodes to earn rewards.</div>
+        <div class="map-actions">
+          <button id="btnCity" class="btn primary">City</button>
         </div>
 
-        <!-- 3D container -->
-        <div id="map3d" class="map3d"></div>
+        <div class="card">
+          <div id="mapInfo" class="sub">
+            Explore the planet. Click events to earn rewards.
+          </div>
+        </div>
 
-        <!-- optional: 2D grid below -->
-        <div id="mapGrid" class="map-grid"></div>
+        <div id="map3d" class="map3d"></div>
       </section>
+      <section class="panel" id="panel-city" aria-label="City">
+        <h3>City</h3>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;align-items:center;">
+            <div class="title">City Map</div>
+            <button id="closeCity" class="btn ghost">Close</button>
+          </div>
+          <div class="sub">Upgrade your buildings here.</div>
+        </div>
+        <div class="card">
+          <div class="sub">Coming soon: buildings & upgrades UI</div>
+        </div>
       </section>
+
 
       <section class="panel" id="panel-inventory" aria-label="Inventory">
         <h3>Inventory</h3>
@@ -121,7 +135,6 @@
               <option value="light">Light</option>
               <option value="neon">Neon</option>
               <option value="green">Green</option>
-
             </select>
           </div>
           <div class="line">
@@ -143,18 +156,17 @@
       </button>
 
       <div class="dock-actions">
-        <button class="tab" data-panel="stats" aria-label="Stats">
-
-          <span class="t">Stats</span>
-        </button>
+        <button class="tab" data-panel="stats" aria-label="Stats"><span class="t">Stats</span></button>
         <button class="btn ghost" id="openSettings"><span class="gear">⚙️</span> Settings</button>
         <button class="btn disabled" id="rebirth" disabled>Rebirth</button>
       </div>
     </footer>
   </div>
-  <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+
   <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
+
   <script src="./script/constants.js"></script>
   <script src="./script/state.js"></script>
   <script src="./script/upgrades.js"></script>

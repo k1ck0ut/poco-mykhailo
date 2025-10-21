@@ -46,6 +46,7 @@
     map: document.getElementById("panel-map"),
     settings: document.getElementById("panel-settings"),
     inventory: document.getElementById("panel-inventory"),
+    city: document.getElementById("panel-city"),
   };
   window.closeBtn = document.getElementById("closePanels");
   window.rebirthBtn = document.getElementById("rebirth");
@@ -244,10 +245,6 @@
       if (upgradeListMain) upgradeListMain.classList.add("hidden");
     });
   }
-
-  // When the upgrades panel is opened from the top nav, ensure the Main
-  // tab is selected and the Special list remains hidden. Without this,
-  // both lists could be visible when opening upgrades for the first time.
   const upgradesTabButton = tabButtons.find(
     (b) => b.dataset.panel === "upgrades"
   );
