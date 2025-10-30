@@ -155,12 +155,13 @@
 
   if (clicker) {
     clicker.addEventListener("click", (e) => {
+      if (typeof playClickSound === "function") playClickSound();
       const isCrit = Math.random() < totalCritChance();
       const gain = getPerClick() * (isCrit ? critMultiplier : 1);
       pc += gain;
       totalClicks += 1;
       showPlus(gain, isCrit, e);
-      playBeep();
+
       render();
       save();
       spawnRain(isCrit ? 8 : 4);
@@ -182,13 +183,13 @@
       if (pc >= cost) {
         pc -= cost;
         brainLvl += 1;
-        perClick += 1;
+        if (typeof baseManualClick === "undefined") baseManualClick = 0;
+        baseManualClick += 1;
         if (brainLvl % 5 === 0) usd += brainLvl;
         if (brainLvl % 7 === 0) cpu += Math.ceil(brainLvl / 10);
+        recalcTotals();
         render();
         save();
-      } else {
-        bump(btnBrain);
       }
     });
   }
@@ -274,4 +275,71 @@
       }
     });
   }
+  (function initShopTabs() {
+    const tabBtns = Array.from(document.querySelectorAll(".shop-tab"));
+    const views = {
+      cases: document.getElementById("shopCases"),
+      daily: document.getElementById("shopDaily"),
+      styles: document.getElementById("shopStyles"),
+      gambling: document.getElementById("shopGambling"),
+    };
+
+    function openShopSubtab(name) {
+      tabBtns.forEach((b) => {
+        const key = b.getAttribute("data-shop-tab");
+        if (key === name) {
+          if (b.disabled) return;
+          b.classList.add("selected");
+        } else {
+          b.classList.remove("selected");
+        }
+      });
+
+      Object.keys(views).forEach((k) => {
+        const el = views[k];
+        if (!el) return;
+        el.classList.toggle("active", k === name);
+      });
+      if (name === "daily") {
+        if (typeof loadDailyShop === "function") {
+          loadDailyShop();
+        }
+      }
+    }
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const target = btn.getAttribute("data-shop-tab");
+        if (btn.disabled) return;
+        openShopSubtab(target);
+      });
+    });
+    openShopSubtab("cases");
+  })();
+  (function initCaseButtons() {
+    function wireCaseButtons() {
+      document.querySelectorAll(".buy-case").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const caseId = this.getAttribute("data-case");
+          if (typeof buyCase === "function") {
+            buyCase(caseId);
+          }
+        });
+      });
+    }
+    wireCaseButtons();
+  })();
+
+  (function hookOpenPanelForShop() {
+    const _openPanelOld = window.openPanel;
+    window.openPanel = function (name) {
+      _openPanelOld && _openPanelOld(name);
+
+      if (name === "shop") {
+        if (typeof loadDailyShop === "function") {
+          loadDailyShop();
+        }
+      }
+    };
+  })();
 })();

@@ -12,16 +12,49 @@ window.LS = {
   sfx: "pc:sfx",
   music: "pc:music",
 };
+window.formatNiceUpgrade = function (n) {
+  if (!Number.isFinite(n)) n = 0;
+  const abs = Math.abs(n);
 
+  if (abs < 99000000) {
+    const decimals = n < 1 ? 2 : n < 10 ? 1 : 0;
+    return n
+      .toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })
+      .replace(/,/g, " ");
+  }
+
+  const short = formatCompact(n);
+  const m = short.match(/^([0-9.]+)([A-Za-z]+)$/);
+  if (m) {
+    return m[1] + " " + m[2];
+  }
+  return short;
+};
 window.formatCompact = function (n) {
   const abs = Math.abs(n);
-  const units = [
+  if (abs < 1000) {
+    if (Number.isInteger(n)) return String(n);
+    return n.toFixed(2).replace(/\.0+$|(\.\d*[1-9])0+$/, "$1");
+  }
+
+  const fixedUnits = [
+    { s: "Dc", v: 1e33 },
+    { s: "No", v: 1e30 },
+    { s: "Oc", v: 1e27 },
+    { s: "Sp", v: 1e24 },
+    { s: "Sx", v: 1e21 },
+    { s: "Qi", v: 1e18 },
+    { s: "Qa", v: 1e15 },
     { s: "T", v: 1e12 },
     { s: "B", v: 1e9 },
     { s: "M", v: 1e6 },
     { s: "k", v: 1e3 },
   ];
-  for (const u of units) {
+
+  for (const u of fixedUnits) {
     if (abs >= u.v) {
       const v = n / u.v;
       const d = v < 10 ? 2 : v < 100 ? 1 : 0;
@@ -29,8 +62,31 @@ window.formatCompact = function (n) {
       return str + u.s;
     }
   }
-  if (Number.isInteger(n)) return String(n);
-  return n.toFixed(2).replace(/\.0+$|(\.\d*[1-9])0+$/, "$1");
+
+  const exp = Math.floor(Math.log10(abs));
+  const tierIndex = Math.floor(exp / 3) - 1;
+  const maxFixedTierIndex = (function () {
+    const top = fixedUnits[0];
+    const topExp = Math.floor(Math.log10(top.v));
+    return Math.floor(topExp / 3) - 1;
+  })();
+
+  function makeProceduralSuffix(idx) {
+    const upperBase = Math.floor(idx / 26);
+    const lowerBase = idx % 26;
+    const upperChar = String.fromCharCode("A".charCodeAt(0) + upperBase);
+    const lowerChar = String.fromCharCode("a".charCodeAt(0) + lowerBase);
+    return upperChar + lowerChar;
+  }
+
+  const proceduralTier = tierIndex - maxFixedTierIndex - 1;
+  const suffix = makeProceduralSuffix(proceduralTier);
+  const tierExp = (tierIndex + 1) * 3;
+  const scale = Math.pow(10, tierExp);
+  const val = n / scale;
+  const decimals = val < 10 ? 2 : val < 100 ? 1 : 0;
+  const valStr = val.toFixed(decimals).replace(/\.0+$|(\.\d*[1-9])0+$/, "$1");
+  return valStr + suffix;
 };
 
 window.ICONS = {
@@ -63,18 +119,13 @@ window.ICONS = {
     crit_boost: "assets/crit_boost.png",
     double_click: "assets/double_click.png",
     triple_click: "assets/triple_click.png",
-    passive_boost1: "assets/passive_boost1.png",
-    passive_boost2: "assets/passive_boost2.png",
     crit_charm: "assets/crit_charm.png",
     golden_click: "assets/golden_click.png",
     cash_infusion: "assets/cash_infusion.png",
     cpu_overclock: "assets/cpu_overclock.png",
     usd_boost: "assets/usd_boost.png",
-    outsource: "assets/outsource.png",
     network_boost: "assets/network_boost.png",
     tools: "assets/tools.png",
-    new_computer: "assets/new_computer.png",
-    mentor: "assets/mentor.png",
     time_machine: "assets/time_machine.png",
     design_skin: "assets/design_skin.png",
     music_pack: "assets/music_pack.png",

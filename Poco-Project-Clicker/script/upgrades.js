@@ -1,139 +1,139 @@
+function ccCost(baseCost, lvl) {
+  return Math.floor(baseCost * Math.pow(1.15, lvl));
+}
+
 window.mainUpgrades = [
   {
     id: "brainstorm",
-    name: "Brainstorm",
-    effectType: "perClick",
-    increment: 10000,
-    costFunc: (lvl) => 10 + 20 * lvl * (lvl + 1),
-    icon: ICONS.upgradeIcons.brainstorm,
-  },
-  {
-    id: "brainstorm",
-    name: "Brainstorm",
-    effectType: "perClick",
+    name: "Brainstorm (Main)",
+    effectType: "perSecond",
+    baseIncome: 1000,
     increment: 1,
-    costFunc: (lvl) => 10 + 20 * lvl * (lvl + 1),
+    costFunc: (lvl) => (10 + 40 * lvl * (lvl + 2)) * Math.pow(1.15, lvl),
     icon: ICONS.upgradeIcons.brainstorm,
+    unlockAt: 0,
   },
-  {
-    id: "focusing",
-    name: "Focusing Time",
-    effectType: "perClick",
-    increment: 0.5,
-    costFunc: (lvl) => 150 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.focusing,
-  },
+
   {
     id: "coffee_break",
     name: "Coffee Break",
-    effectType: "perClick",
-    increment: 0.2,
-    costFunc: (lvl) => 500 * (lvl + 1) * (lvl + 1),
+    effectType: "perSecond",
+    baseIncome: 0.1,
+    increment: 0.1,
+    baseCost: 15,
+    costFunc: (lvl) => ccCost(15, lvl),
     icon: ICONS.upgradeIcons.coffee_break,
+    unlockAt: 10,
   },
   {
-    id: "study_algorithms",
-    name: "Study Algorithms",
+    id: "junior_dev",
+    name: "Junior Developer",
     effectType: "perSecond",
-    increment: 0.05,
-    costFunc: (lvl) => 800 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.study_algorithms,
+    baseIncome: 1,
+    increment: 1,
+    baseCost: 100,
+    costFunc: (lvl) => ccCost(100, lvl),
+    icon: ICONS.upgradeIcons.bootcamp,
+    unlockAt: 70,
+  },
+  {
+    id: "stack_overflow",
+    name: "Stack Overflow",
+    effectType: "perSecond",
+    baseIncome: 8,
+    increment: 8,
+    baseCost: 1100,
+    costFunc: (lvl) => ccCost(1100, lvl),
+    icon: ICONS.upgradeIcons.debug_tools,
+    unlockAt: 1000,
   },
   {
     id: "refactoring",
     name: "Refactoring",
-    effectType: "perClick",
-    increment: 0.1,
-    costFunc: (lvl) => 1200 * (lvl + 1) * (lvl + 1),
+    effectType: "perSecond",
+    baseIncome: 47,
+    increment: 47,
+    baseCost: 12000,
+    costFunc: (lvl) => ccCost(12000, lvl),
     icon: ICONS.upgradeIcons.refactoring,
+    unlockAt: 10000,
   },
   {
-    id: "debug_tools",
-    name: "Debugging Tools",
+    id: "automation_script",
+    name: "Automation Script",
     effectType: "perSecond",
-    increment: 0.2,
-    costFunc: (lvl) => 2000 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.debug_tools,
-  },
-  {
-    id: "bootcamp",
-    name: "Coding Bootcamp",
-    effectType: "perClick",
-    increment: 1,
-    costFunc: (lvl) => 5000 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.bootcamp,
-  },
-  {
-    id: "hackathon",
-    name: "Hackathon",
-    effectType: "perSecond",
-    increment: 0.5,
-    costFunc: (lvl) => 8000 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.hackathon,
-  },
-  {
-    id: "optimize_code",
-    name: "Optimize Code",
-    effectType: "perClick",
-    increment: 0.3,
-    costFunc: (lvl) => 10000 * (lvl + 1) * (lvl + 1),
+    baseIncome: 260,
+    increment: 260,
+    baseCost: 130000,
+    costFunc: (lvl) => ccCost(130000, lvl),
     icon: ICONS.upgradeIcons.optimize_code,
+    unlockAt: 100000,
   },
   {
     id: "ai_assistant",
     name: "AI Assistant",
     effectType: "perSecond",
-    increment: 1,
-    costFunc: (lvl) => 20000 * (lvl + 1) * (lvl + 1),
+    baseIncome: 1400,
+    increment: 1400,
+    baseCost: 1400000,
+    costFunc: (lvl) => ccCost(1400000, lvl),
     icon: ICONS.upgradeIcons.ai_assistant,
+    unlockAt: 1000000,
   },
   {
-    id: "quantum",
-    name: "Quantum Upgrade",
-    effectType: "perClick",
-    increment: 5,
-    costFunc: (lvl) => 100000 * (lvl + 1) * (lvl + 1),
+    id: "cloud_dc",
+    name: "Cloud Data Center",
+    effectType: "perSecond",
+    baseIncome: 7800,
+    increment: 7800,
+    baseCost: 20000000,
+    costFunc: (lvl) => ccCost(20000000, lvl),
+    icon: ICONS.upgradeIcons.data_center,
+    unlockAt: 15000000,
+  },
+  {
+    id: "quantum_computer",
+    name: "Quantum Computer",
+    effectType: "perSecond",
+    baseIncome: 44000,
+    increment: 44000,
+    baseCost: 330000000,
+    costFunc: (lvl) => ccCost(330000000, lvl),
     icon: ICONS.upgradeIcons.quantum,
+    unlockAt: 250000000,
   },
   {
-    id: "deep_learning",
-    name: "Deep Learning",
+    id: "nn_cluster",
+    name: "Neural Network Cluster",
     effectType: "perSecond",
-    increment: 2,
-    costFunc: (lvl) => 150000 * (lvl + 1) * (lvl + 1),
+    baseIncome: 260000,
+    increment: 260000,
+    baseCost: 5100000000,
+    costFunc: (lvl) => ccCost(5100000000, lvl),
     icon: ICONS.upgradeIcons.deep_learning,
+    unlockAt: 4100000000,
   },
   {
-    id: "brain_machine",
-    name: "Brain‑Machine Interface",
-    effectType: "perClick",
-    increment: 10,
-    costFunc: (lvl) => 500000 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.brain_machine,
-  },
-  {
-    id: "server_room",
-    name: "Server Room",
+    id: "open_source",
+    name: "Open Source",
     effectType: "perSecond",
-    increment: 5,
-    costFunc: (lvl) => 50000 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.server_room || ICONS.cpu,
-  },
-  {
-    id: "research_lab",
-    name: "Research Lab",
-    effectType: "perSecond",
-    increment: 10,
-    costFunc: (lvl) => 100000 * (lvl + 1) * (lvl + 1),
+    baseIncome: 1600000,
+    increment: 1600000,
+    baseCost: 75000000000,
+    costFunc: (lvl) => ccCost(75000000000, lvl),
     icon: ICONS.upgradeIcons.research_lab,
+    unlockAt: 55000000000,
   },
   {
-    id: "data_center",
-    name: "Data Center",
+    id: "tech_singularity",
+    name: "Tech Singularity",
     effectType: "perSecond",
-    increment: 25,
-    costFunc: (lvl) => 250000 * (lvl + 1) * (lvl + 1),
-    icon: ICONS.upgradeIcons.data_center || ICONS.cpu,
+    baseIncome: 10000000,
+    increment: 10000000,
+    baseCost: 1000000000000,
+    costFunc: (lvl) => ccCost(1000000000000, lvl),
+    icon: ICONS.upgradeIcons.brain_machine,
+    unlockAt: 1000000000000,
   },
 ];
 
@@ -147,6 +147,7 @@ window.specialUpgrades = [
     icon: ICONS.upgradeIcons?.crit_boost,
     effect: function () {
       critFromUpgrades += 0.05;
+      if (typeof recalcTotals === "function") recalcTotals();
     },
     condition: () => true,
   },
@@ -159,6 +160,7 @@ window.specialUpgrades = [
     icon: ICONS.upgradeIcons?.crit_charm,
     effect: function () {
       critFromUpgrades += 0.1;
+      if (typeof recalcTotals === "function") recalcTotals();
     },
     condition: () => true,
   },
@@ -170,7 +172,8 @@ window.specialUpgrades = [
     sellable: true,
     icon: ICONS.upgradeIcons.double_click,
     effect: function () {
-      perClick *= 2;
+      perClickMult = perClickMult * 2;
+      if (typeof recalcTotals === "function") recalcTotals();
     },
     condition: () => true,
   },
@@ -182,55 +185,34 @@ window.specialUpgrades = [
     sellable: true,
     icon: ICONS.upgradeIcons.triple_click,
     effect: function () {
-      perClick *= 3;
-    },
-    condition: () => true,
-  },
-  {
-    id: "passive_boost1",
-    name: "Passive Kickstart",
-    desc: "+5 per second",
-    cost: 8000,
-    sellable: true,
-    icon: ICONS.upgradeIcons.passive_boost1,
-    effect: function () {
-      pcps += 5;
-    },
-    condition: () => true,
-  },
-  {
-    id: "passive_boost2",
-    name: "Passive Surge",
-    desc: "+50 per second",
-    cost: 20000,
-    sellable: true,
-    icon: ICONS.upgradeIcons.passive_boost2,
-    effect: function () {
-      pcps += 50;
+      perClickMult = perClickMult * 3;
+      if (typeof recalcTotals === "function") recalcTotals();
     },
     condition: () => true,
   },
   {
     id: "golden_click",
-    name: "Golden Finger",
+    name: "Golden Fingers",
     desc: "+100 per click",
     cost: 30000,
     sellable: true,
     icon: ICONS.upgradeIcons.golden_click,
     effect: function () {
-      perClick += 100;
+      if (typeof baseManualClick === "undefined") baseManualClick = 0;
+      baseManualClick += 100;
+      if (typeof recalcTotals === "function") recalcTotals();
     },
     condition: () => true,
   },
   {
     id: "cash_infusion",
     name: "Cash Infusion",
-    desc: "+1000 PC instantly",
+    desc: "+10000 PC instantly",
     cost: 5000,
     sellable: false,
     icon: ICONS.upgradeIcons.cash_infusion,
     effect: function () {
-      pc += 1000;
+      pc += 10000;
     },
     condition: () => true,
   },
@@ -259,95 +241,65 @@ window.specialUpgrades = [
     condition: () => true,
   },
   {
-    id: "outsource",
-    name: "Outsourcing",
-    desc: "+2 per second",
-    cost: 6000,
-    sellable: false,
-    icon: ICONS.upgradeIcons.outsource,
-    effect: function () {
-      pcps += 2;
-    },
-    condition: () => true,
-  },
-  {
     id: "network_boost",
     name: "Network Boost",
     desc: "Doubles passive income",
-    cost: 30000,
+    cost: 30000000,
     sellable: false,
     icon: ICONS.upgradeIcons.network_boost,
-    effect: function () {
-      pcps *= 2;
-    },
+    effect: function () {},
     condition: () => true,
   },
-  {
-    id: "tools",
-    name: "Automation Tools",
-    desc: "+0.5 per click",
-    cost: 4000,
-    sellable: false,
-    icon: ICONS.upgradeIcons.tools,
-    effect: function () {
-      perClick += 0.5;
-    },
-    condition: () => true,
-  },
-  {
-    id: "new_computer",
-    name: "New Computer",
-    desc: "+5 per click",
-    cost: 10000,
-    sellable: false,
-    icon: ICONS.upgradeIcons.new_computer,
-    effect: function () {
-      perClick += 5;
-    },
-    condition: () => true,
-  },
-  {
-    id: "mentor",
-    name: "Mentorship",
-    desc: "+10 per second",
-    cost: 25000,
-    sellable: false,
-    icon: ICONS.upgradeIcons.mentor,
-    effect: function () {
-      pcps += 10;
-    },
-    condition: () => true,
-  },
+
   {
     id: "time_machine",
     name: "Time Machine",
-    desc: "+100k instantly",
-    cost: 70000,
+    desc: "Gain 1,000,000 PC instantly",
+    cost: 100000,
     sellable: false,
     icon: ICONS.upgradeIcons.time_machine,
     effect: function () {
-      pc += 100000;
+      pc += 1000000;
     },
     condition: () => true,
   },
   {
+    id: "click_from_passive",
+    name: "Synergy Engine",
+    desc: "Each click gives +10% of current income per second.",
+    cost: 1000000,
+    sellable: false,
+    icon: ICONS.upgradeIcons.server_room,
+    effect: function () {
+      bonusClickFromPassive = true;
+      if (typeof recalcTotals === "function") recalcTotals();
+    },
+    condition: () => !bonusClickFromPassive,
+  },
+  {
     id: "design_skin",
-    name: "Dark Theme Pack",
-    desc: "Unlocks neon theme",
-    cost: 5000,
+    name: "UI Redesign",
+    desc: "Unlocks a new skin",
+    cost: 20000,
     sellable: false,
     icon: ICONS.upgradeIcons.design_skin,
     effect: function () {
       theme = "neon";
-      applyTheme();
+      if (typeof applyTheme === "function") {
+        applyTheme();
+      }
+      if (typeof themeSel !== "undefined" && themeSel) {
+        themeSel.value = "neon";
+      }
+      localStorage.setItem(LS.theme, theme);
     },
     condition: () => true,
   },
   {
     id: "music_pack",
-    name: "Music Pack",
-    desc: "Background music unlocked",
-    cost: 5000,
+    name: "Lo-Fi Pack",
+    desc: "Unlocks music theme",
+    cost: 15000,
     sellable: false,
     icon: ICONS.upgradeIcons.music_pack,
     effect: function () {
@@ -357,13 +309,13 @@ window.specialUpgrades = [
   },
   {
     id: "usd_billionaire",
-    name: "Billionaire Gift",
-    desc: "+1,000,000 USD instantly",
-    cost: 1000000,
+    name: "Billionaire Package",
+    desc: "+1,000 USD instantly",
+    cost: 50000,
     sellable: false,
     icon: ICONS.upgradeIcons.usd_billionaire,
     effect: function () {
-      usd += 1000000;
+      usd += 1000;
     },
     condition: () => true,
   },
@@ -371,7 +323,7 @@ window.specialUpgrades = [
     id: "cpu_factory",
     name: "CPU Factory",
     desc: "+100 CPU",
-    cost: 50000,
+    cost: 100000,
     sellable: false,
     icon: ICONS.upgradeIcons.cpu_factory,
     effect: function () {
@@ -382,27 +334,35 @@ window.specialUpgrades = [
   {
     id: "resource_pack",
     name: "Resource Pack",
-    desc: "+100 PC, +10 CPU, +50 USD",
-    cost: 25000,
+    desc: "+100 CPU, +1,000 USD, +10,000 PC instantly",
+    cost: 250000,
     sellable: false,
     icon: ICONS.upgradeIcons.resource_pack,
     effect: function () {
-      pc += 100;
-      cpu += 10;
-      usd += 50;
+      cpu += 100;
+      usd += 1000;
+      pc += 10000;
     },
     condition: () => true,
   },
   {
     id: "unlock_shop",
     name: "Unlock Shop",
-    desc: "Opens the top Shop tab",
+    desc: "Unlocks the Shop tab",
     costFunc: () => shopCost(),
-    icon: ICONS.upgradeIcons.unlock_shop || ICONS.shop,
+    sellable: false,
+    icon: ICONS.upgradeIcons.unlock_shop,
     effect: function () {
       shopUnlocked = true;
+      localStorage.setItem(LS.shop, "1");
+
+      const shopTab = document.querySelector('.tab[data-panel="shop"]');
+      if (shopTab) {
+        shopTab.disabled = false;
+      }
+
+      if (typeof save === "function") save();
     },
-    condition: () =>
-      (upgradeLevels.brainstorm || brainLvl) >= 10 && !shopUnlocked,
+    condition: () => !shopUnlocked,
   },
 ];

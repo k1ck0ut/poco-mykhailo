@@ -5,6 +5,7 @@
     applyCurrency();
     populateSettings();
     recomputeDerived();
+    recalcTotals();
     render();
     closeAllPanels();
     setInterval(() => {
@@ -16,7 +17,19 @@
     }, 1000);
     renderAchievements();
     checkAchievements();
+    if (window.musicEnabled) {
+      playBackgroundMusic();
+    }
+
+    document.addEventListener(
+      "click",
+      function () {
+        resumeMusicIfNeeded();
+      },
+      { once: true }
+    );
   };
+
   if (document.readyState !== "loading") {
     initGame();
   } else {

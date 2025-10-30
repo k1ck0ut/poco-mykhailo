@@ -39,9 +39,22 @@
     </header>
 
     <main class="playfield" id="playfield">
-      <button id="closePanels" class="close-btn" aria-label="Close">✕</button>
-      <div id="centerSymbol">{P.}</div>
+      <div class="playfield-visual-wrapper">
+        <div class="playfield-bg">
+          <video class="bg-video bg-dark" src="assets/bg-dark.webm" autoplay muted loop playsinline></video>
+          <video class="bg-video bg-light" src="assets/bg-light.webm" autoplay muted loop playsinline></video>
+          <video class="bg-video bg-green" src="assets/bg-green.webm" autoplay muted loop playsinline></video>
+          <video class="bg-video bg-neon" src="assets/bg-neon.webm" autoplay muted loop playsinline></video>
+        </div>
+        <div class="playfield-foreground">
+          <button id="closePanels" class="close-btn" aria-label="Close">✕</button>
 
+        </div>
+      </div>
+      <div id="centerWrapper">
+        <div id="centerSymbol" class="center-shared">{P.}</div>
+        <div id="centerAmount" class="center-shared">0</div>
+      </div>
       <section class="panel" id="panel-upgrades" aria-label="Upgrades">
         <h3>Upgrades</h3>
         <div class="upgrade-tabs">
@@ -60,10 +73,82 @@
 
       <section class="panel" id="panel-shop" aria-label="Shop">
         <h3>Shop</h3>
-        <div class="card">
-          <div class="sub">In development</div>
+        <div class="shop-tabs">
+          <button class="shop-tab selected" data-shop-tab="cases">Cases</button>
+          <button class="shop-tab" data-shop-tab="daily">Daily</button>
+          <button class="shop-tab" data-shop-tab="styles" disabled>Styles</button>
+          <button class="shop-tab" data-shop-tab="gambling" disabled>Gambling 🔒</button>
+        </div>
+
+        <div class="shop-content active" id="shopCases">
+          <div class="card">
+            <div class="title">Loot Cases</div>
+            <div class="sub">Buy a case, open it, receive random gear into your bag.</div>
+
+            <div class="shop-grid">
+
+              <div class="shop-item">
+                <div class="shop-item-ico rare">Basic Case</div>
+                <div class="shop-item-body">
+                  <div class="shop-item-name">Basic Case</div>
+                  <div class="shop-item-desc">Common / Uncommon gear</div>
+                  <div class="shop-item-price"><span class="pSym">{P.}</span> <span>19 999</span></div>
+                  <button class="btn small buy-case" data-case="basic">Buy</button>
+                </div>
+              </div>
+
+              <div class="shop-item">
+                <div class="shop-item-ico epic">Pro Case</div>
+                <div class="shop-item-body">
+                  <div class="shop-item-name">Pro Case</div>
+                  <div class="shop-item-desc">Uncommon / Rare / Epic gear</div>
+                  <div class="shop-item-price"><span class="pSym">{P.}</span> <span>199 999</span></div>
+                  <button class="btn small buy-case" data-case="pro">Buy</button>
+                </div>
+              </div>
+
+              <div class="shop-item">
+                <div class="shop-item-ico legendary">Legend Case</div>
+                <div class="shop-item-body">
+                  <div class="shop-item-name">Legend Case</div>
+                  <div class="shop-item-desc">Epic / Legendary only</div>
+                  <div class="shop-item-price"><span class="pSym">{P.}</span> <span>1 999 999</span></div>
+                  <button class="btn small buy-case" data-case="legend">Buy</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="shop-content" id="shopDaily">
+          <div class="card">
+            <div class="row" style="justify-content:space-between;align-items:center;">
+              <div class="title">Daily Shop</div>
+              <div class="sub" id="dailyTimer">Resets at 00:00 Bern</div>
+            </div>
+
+            <div class="sub" style="margin-top:6px;">Limited stock. Refreshes daily.</div>
+
+            <div class="shop-grid" id="dailyItems"></div>
+          </div>
+        </div>
+
+        <div class="shop-content" id="shopStyles">
+          <div class="card">
+            <div class="title">Style Shop</div>
+            <div class="sub">Coming soon: themes / cosmetics</div>
+          </div>
+        </div>
+
+        <div class="shop-content" id="shopGambling">
+          <div class="card">
+            <div class="title">Gambling</div>
+            <div class="sub">Locked for now.</div>
+          </div>
         </div>
       </section>
+
 
       <section class="panel" id="panel-stats" aria-label="Stats">
         <h3>Stats</h3>
@@ -72,7 +157,8 @@
           <div class="line"><span>Per click</span><b><span id="perClick">1</span> <span id="pSymInline3">{P.}</span></b>
           </div>
           <div class="line"><span>Per second</span><b><span id="perSecond">0</span> <span
-                id="pSymInline4">{P.}</span></b></div>
+                id="pSymInline4">{P.}</span></b>
+          </div>
           <div class="line"><span>Crit chance</span><b id="critChanceStat">0%</b></div>
           <div class="line"><span>Crit multiplier</span><b id="critMultStat">x2</b></div>
         </div>
@@ -111,22 +197,71 @@
         </div>
       </section>
 
-
       <section class="panel" id="panel-inventory" aria-label="Inventory">
         <h3>Inventory</h3>
-        <div class="card">
-          <div class="sub">In development</div>
+
+        <div class="inventory-wrapper card-big">
+          <div class="equip-block card subpanel compact-equip">
+            <div class="equip-header-row">
+              <div class="title">Equipment</div>
+            </div>
+
+            <div class="equip-layout compact">
+              <div class="equip-preview small">
+                <div class="equip-preview-body small">
+                </div>
+              </div>
+
+              <div class="equip-slots" id="equipGrid">
+                <div class="slot" data-slot="hat"><span>Hat</span></div>
+                <div class="slot" data-slot="shirt"><span>Shirt</span></div>
+                <div class="slot" data-slot="pants"><span>Pants</span></div>
+                <div class="slot" data-slot="boots"><span>Boots</span></div>
+                <div class="slot" data-slot="ring"><span>Ring</span></div>
+                <div class="slot" data-slot="jewel"><span>Jewel</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bag-block card subpanel">
+            <div class="row bag-header" style="justify-content:space-between;align-items:center;">
+              <div class="title">Bag</div>
+              <div class="sub" id="invCapacity">0 / 20</div>
+            </div>
+
+            <div id="bagGrid" class="bag-grid"></div>
+
+            <div class="row gap bag-actions" style="margin-top:10px;flex-wrap:wrap;">
+              <button id="btnSortInv" class="btn small">Sort</button>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="panel" id="panel-settings" aria-label="Settings">
         <h3>Settings</h3>
         <div class="card">
-          <div class="line"><span>Sound FX</span><label class="switch"><input type="checkbox"
-                id="sfxToggle"><span></span></label></div>
-          <div class="line"><span>Music</span><label class="switch"><input type="checkbox"
-                id="musicToggle"><span></span></label></div>
+          <div class="line">
+            <span>Sound FX</span>
+            <label class="switch">
+              <input type="checkbox" id="sfxToggle" />
+              <span></span>
+            </label>
+          </div>
+          <div class="line">
+            <span>Music</span>
+            <label class="switch">
+              <input type="checkbox" id="musicToggle" />
+              <span></span>
+            </label>
+          </div>
+          <div class="line" id="musicVolumeRow">
+            <span>Music Volume</span>
+            <input type="range" id="musicVolume" min="0" max="=200" step="1"
+              style="width: 120px; vertical-align: middle;" />
+          </div>
         </div>
+
         <div class="card">
           <div class="line">
             <span>Theme</span>
@@ -142,7 +277,17 @@
             <select id="styleSel"></select>
           </div>
         </div>
+
+        <div class="card">
+          <div class="setting-row">
+            <label>
+              <input type="checkbox" id="effectsToggle" />
+              Disable visual effects
+            </label>
+          </div>
+        </div>
       </section>
+
     </main>
 
     <footer class="dock">
@@ -171,6 +316,7 @@
   <script src="./script/state.js"></script>
   <script src="./script/upgrades.js"></script>
   <script src="./script/achievements.js"></script>
+  <script src="./script/inventory.js"></script>
   <script src="./script/logic.js"></script>
   <script src="./script/ui.js"></script>
   <script src="./script/audio.js"></script>
