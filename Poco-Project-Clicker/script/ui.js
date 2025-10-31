@@ -514,7 +514,7 @@
       s.appendChild(img);
       const x = Math.random() * (rect.width - 40) - rect.width / 2;
       s.style.setProperty("--x", x + "px");
-      s.style.setProperty("--dur", 5.6 + Math.random() * 3.6 + "s");
+      s.style.setProperty("--dur", 3.6 + Math.random() * 1 + "s");
       s.style.left = rect.width / 2 + "px";
       s.style.top = "0px";
       playfield.appendChild(s);
@@ -531,7 +531,7 @@
         { transform: "scale(1.06)" },
         { transform: "scale(1)" },
       ],
-      { duration: 220, easing: "ease-out" }
+      { duration: 120, easing: "ease-out" }
     );
   };
 
@@ -774,6 +774,45 @@
       });
     }
   };
+
+  function renderExchange() {
+    const wrap = document.getElementById("exchangeItems");
+    if (!wrap) return;
+    wrap.innerHTML = "";
+    EXCHANGE_OFFERS.forEach((off) => {
+      const can =
+        off.type === "pc_to_usd" ||
+        off.type === "pc_to_usd_pack" ||
+        off.type === "pc_to_cpu"
+          ? pc >= off.pc
+          : off.type === "usd_to_pc"
+          ? usd >= off.usd
+          : false;
+
+      const priceHtml = (() => {
+        if (off.type.startsWith("pc_to_")) {
+          return `<span class="pSym">{P.}</span> ${off.pc.toLocaleString()}`;
+        } else {
+          return `<span class="pSym">$</span> ${off.usd.toLocaleString()}`;
+        }
+      })();
+
+      const div = document.createElement("div");
+      div.className = "shop-item";
+      div.innerHTML = `
+      <div class="shop-item-ico">${off.type.includes("cpu") ? "CPU" : "$"}</div>
+      <div class="shop-item-body">
+        <div class="shop-item-name">${off.label}</div>
+        <div class="shop-item-desc">${off.type}</div>
+        <div class="shop-item-price">${priceHtml}</div>
+        <button class="btn small" data-exchange="${off.id}" ${
+        can ? "" : "disabled"
+      }>Exchange</button>
+      </div>
+    `;
+      wrap.appendChild(div);
+    });
+  }
 
   window.renderAchievements = function () {
     const listEl = document.getElementById("achievementsList");

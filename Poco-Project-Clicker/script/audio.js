@@ -38,11 +38,6 @@
   };
 
   const clickSounds = [
-    // new Audio("assets/sfx/click.wav"),
-    // new Audio("assets/sfx/click (1).wav"),
-    // new Audio("assets/sfx/click (2).wav"),
-    // new Audio("assets/sfx/click (3).wav"),
-
     new Audio("assets/sfx/click1.wav"),
     new Audio("assets/sfx/click2.wav"),
     new Audio("assets/sfx/click3.wav"),

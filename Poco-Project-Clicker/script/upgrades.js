@@ -7,7 +7,7 @@ window.mainUpgrades = [
     id: "brainstorm",
     name: "Brainstorm (Main)",
     effectType: "perSecond",
-    baseIncome: 1000,
+    baseIncome: 1,
     increment: 1,
     costFunc: (lvl) => (10 + 40 * lvl * (lvl + 2)) * Math.pow(1.15, lvl),
     icon: ICONS.upgradeIcons.brainstorm,
@@ -141,7 +141,7 @@ window.specialUpgrades = [
   {
     id: "crit_boost",
     name: "Critical Thinker",
-    desc: "+5% critical chance (one-time unlock)",
+    desc: "+5% critical chance",
     cost: 5799,
     sellable: true,
     icon: ICONS.upgradeIcons?.crit_boost,
@@ -168,7 +168,7 @@ window.specialUpgrades = [
     id: "double_click",
     name: "Double Clicker",
     desc: "Doubles your per click permanently",
-    cost: 10000,
+    cost: 100000,
     sellable: true,
     icon: ICONS.upgradeIcons.double_click,
     effect: function () {
@@ -181,7 +181,7 @@ window.specialUpgrades = [
     id: "triple_click",
     name: "Triple Clicker",
     desc: "Triples your per click permanently",
-    cost: 50000,
+    cost: 200000,
     sellable: true,
     icon: ICONS.upgradeIcons.triple_click,
     effect: function () {
@@ -194,7 +194,7 @@ window.specialUpgrades = [
     id: "golden_click",
     name: "Golden Fingers",
     desc: "+100 per click",
-    cost: 30000,
+    cost: 5000,
     sellable: true,
     icon: ICONS.upgradeIcons.golden_click,
     effect: function () {
@@ -207,7 +207,7 @@ window.specialUpgrades = [
   {
     id: "cash_infusion",
     name: "Cash Infusion",
-    desc: "+10000 PC instantly",
+    desc: "+10000 PC instantly (1 time per Rebirth)",
     cost: 5000,
     sellable: false,
     icon: ICONS.upgradeIcons.cash_infusion,
@@ -254,7 +254,7 @@ window.specialUpgrades = [
   {
     id: "time_machine",
     name: "Time Machine",
-    desc: "Gain 1,000,000 PC instantly",
+    desc: "Gain 1,000,000 PC instantly (Go and buy some bitcoins)",
     cost: 100000,
     sellable: false,
     icon: ICONS.upgradeIcons.time_machine,

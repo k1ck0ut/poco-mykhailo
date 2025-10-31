@@ -76,6 +76,8 @@
   }
 
   function recalcTotals() {
+    const instituteLvl = city && city.institute ? city.institute : 0;
+    passiveMult *= 1 + 0.05 * instituteLvl;
     if (typeof window.baseManualClick === "undefined")
       window.baseManualClick = 0;
     if (typeof window.basePassivePS === "undefined") window.basePassivePS = 0;

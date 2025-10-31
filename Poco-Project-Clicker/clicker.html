@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Powercoders Clicker</title>
   <link rel="stylesheet" href="clicker.css" />
   <link rel="icon" type="assets/x-icon" href="./assets/logo.ico">
@@ -42,13 +42,11 @@
       <div class="playfield-visual-wrapper">
         <div class="playfield-bg">
           <video class="bg-video bg-dark" src="assets/bg-dark.webm" autoplay muted loop playsinline></video>
-          <video class="bg-video bg-light" src="assets/bg-light.webm" autoplay muted loop playsinline></video>
-          <video class="bg-video bg-green" src="assets/bg-green.webm" autoplay muted loop playsinline></video>
           <video class="bg-video bg-neon" src="assets/bg-neon.webm" autoplay muted loop playsinline></video>
         </div>
         <div class="playfield-foreground">
           <button id="closePanels" class="close-btn" aria-label="Close">✕</button>
-
+          <div id="toastStack" aria-live="polite" aria-atomic="true"></div>
         </div>
       </div>
       <div id="centerWrapper">
@@ -76,6 +74,7 @@
         <div class="shop-tabs">
           <button class="shop-tab selected" data-shop-tab="cases">Cases</button>
           <button class="shop-tab" data-shop-tab="daily">Daily</button>
+          <button class="shop-tab" data-shop-tab="exchange">Exchange</button>
           <button class="shop-tab" data-shop-tab="styles" disabled>Styles</button>
           <button class="shop-tab" data-shop-tab="gambling" disabled>Gambling 🔒</button>
         </div>
@@ -131,6 +130,14 @@
             <div class="sub" style="margin-top:6px;">Limited stock. Refreshes daily.</div>
 
             <div class="shop-grid" id="dailyItems"></div>
+          </div>
+        </div>
+
+        <div class="shop-content" id="shopExchange">
+          <div class="card">
+            <div class="title">Exchange</div>
+            <div class="sub">Swap {P.} ⇄ $ and {P.} ⇄ CPU</div>
+            <div class="shop-grid" id="exchangeItems"></div>
           </div>
         </div>
 
@@ -267,7 +274,7 @@
             <span>Theme</span>
             <select id="themeSel">
               <option value="dark">Dark</option>
-              <option value="light">Light</option>
+              <option value="light">Light&Red</option>
               <option value="neon">Neon</option>
               <option value="green">Green</option>
             </select>
@@ -311,7 +318,6 @@
   <script src="https://unpkg.com/three@0.146.0/build/three.min.js"></script>
   <script src="https://unpkg.com/three@0.146.0/examples/js/loaders/GLTFLoader.js"></script>
   <script src="https://unpkg.com/three@0.146.0/examples/js/controls/OrbitControls.js"></script>
-
   <script src="./script/constants.js"></script>
   <script src="./script/state.js"></script>
   <script src="./script/upgrades.js"></script>

@@ -280,6 +280,7 @@
     const views = {
       cases: document.getElementById("shopCases"),
       daily: document.getElementById("shopDaily"),
+      exchange: document.getElementById("shopExchange"),
       styles: document.getElementById("shopStyles"),
       gambling: document.getElementById("shopGambling"),
     };
@@ -292,6 +293,9 @@
           b.classList.add("selected");
         } else {
           b.classList.remove("selected");
+        }
+        if (name === "exchange") {
+          if (typeof renderExchange === "function") renderExchange();
         }
       });
 

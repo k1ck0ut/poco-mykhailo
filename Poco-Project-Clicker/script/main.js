@@ -5,6 +5,8 @@
     applyCurrency();
     populateSettings();
     recomputeDerived();
+    initMusicOnce();
+    renderSettingsMusic();
     recalcTotals();
     render();
     closeAllPanels();
